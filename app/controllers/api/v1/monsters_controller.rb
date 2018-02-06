@@ -1,9 +1,11 @@
 class Api::V1::MonstersController < ApplicationController
-  before_action :set_api_v1_monster, only: [:show, :update, :destroy]
+  before_action :set_api_v1_monster, only: [:show, :update, :destroy, :fight_with]
 
   # GET /api/v1/monsters
   def index
-    @api_v1_monsters = Monster.all
+
+    @q = Monster.search(params[:q])
+    @api_v1_monsters = @q.result
 
     render json: @api_v1_monsters
   end
@@ -36,6 +38,12 @@ class Api::V1::MonstersController < ApplicationController
   # DELETE /api/v1/monsters/1
   def destroy
     @api_v1_monster.destroy
+  end
+
+  # GET api/v1/monsters/1/fight_with?oppontent=Fire
+  def fight_with
+    fight_result = @api_v1_monster.fight_with(params[:oppontent])
+    render json: {fight_result: fight_result}
   end
 
   private
